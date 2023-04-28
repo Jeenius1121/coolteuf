@@ -1,0 +1,211 @@
+.appContainer {
+  min-height:100vh;
+  background-color: #2D2828;
+  
+  }
+  
+  
+  
+  
+  
+  
+  .btnChoix {
+    width: 100%;
+    margin-bottom: 5vh;
+   
+    .actif {  
+      border-bottom: 2px solid white;
+      color: white;
+    
+    }
+    button {
+      
+     font-size: 13px;
+    color: #868585;
+      width: 35%;
+      height: 5vh;
+      background: none;
+      border: none;
+    
+    
+    
+    }
+    
+    }
+  
+  .googleButton {
+    display: flex;
+    width: 90%;
+    height: 7vh;
+    align-items: center;
+    justify-content: center;
+   background: url(https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg);
+   background-size: 2.5vh;
+   background-repeat: no-repeat;
+   background-position: bottom 2.2vh left 3.5vh;
+    border-radius: 20px;
+    border: 2px solid rgb(89, 89, 89);
+    background-color: #454545;
+    color: #FFFF;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  
+    &:hover {
+      background-color: #888686;
+  
+     
+    }
+  
+  }
+  
+  .ou{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2vh ;
+  
+    h3 {
+      margin: 2vh;
+     color: rgb(101, 101, 101);
+     transition: 0,5s;
+  
+  
+   
+  
+    }
+  
+    span {
+      width: 5vh;
+      height: 0px;
+      border-bottom: 1px solid rgb(101, 101, 101);
+    }
+  
+  }
+  
+  
+  .form {
+    width: 100%;
+    height: 35.5vh;
+  
+    .telephone {
+      background: url(../assets/images/Icons/telephone.png) top 1.5vh left 1.5vh #454545;
+      background-size: 25px;
+      background-repeat: no-repeat;
+    }
+  
+    h2 {
+      font-size: 20px;
+      color: rgb(233, 229, 229);
+    }
+  
+   
+  
+    p {
+      color: var(--error);
+    }
+  
+    input {
+      width: 90%;
+      padding-left: 7vh;
+      height: 7vh;
+      border-radius: 20px;
+    border: 2px solid rgb(89, 89, 89);
+    background-color: #454545;
+    color: #FFFF;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+    input:focus {
+      outline: none;
+      border: 2px solid white;
+  
+      &::placeholder {
+        color: white;
+      }
+    }
+  
+    .password {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+  
+      input {
+        width: 80%;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right: none;
+        
+        &:focus {
+          outline: none;
+          border: 2px solid white;
+          border-right: none;
+  
+          &::placeholder {
+            color: white;
+          }
+        }
+      }
+      &:focus-within {
+      & > div {
+        border: 2px solid white;
+        border-left: none;
+      }}
+  
+    
+      div {
+        width: 10%;
+        height: 7vh;
+        border-radius: 20px;
+      border: 2px solid rgb(89, 89, 89);
+      border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: none;
+      background-color: #454545;
+      color: #FFFF;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+        
+      }
+      img {
+       height: 25px;
+      }
+    }
+  
+  .mdp {
+    background: url(../assets/images/Icons/cadenas.png) top 1.8vh left 2vh #454545;;
+    background-size: 2.5vh;
+    background-repeat: no-repeat;
+  
+   
+  }
+  
+  .btn {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+
+    .link {
+     text-decoration: inherit;
+     color: inherit;
+    }
+  
+    button {
+      width: 70%;
+      height: 5vh;
+      border-radius: 10px;
+      background-color: #843E6D;
+      font-size: 20px;
+      color: white;
+      border: none;
+    }
+  
+  }
+  
+  }
+  
