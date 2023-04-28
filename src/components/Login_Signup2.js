@@ -23,11 +23,8 @@ import { StatusBar } from "expo-status-bar";
 import { RecaptchaVerifier } from "firebase/auth";
 import { auth } from "../../firebase";
 
-export default function Login() {
+export default function Login2() {
   const navigation = useNavigation();
-  const [verificationId, setVerificationId] = useState(null);
-  const [verificationInProgress, setVerificationInProgress] = useState(false);
-  const recaptchaVerifier = useRef(null);
   const [input1, setInput1] = useState("");
   const [input2, setInput2] = useState("");
   const [input3, setInput3] = useState("");
@@ -62,9 +59,6 @@ export default function Login() {
 
     if (!input3) {
       errorsCopy.tel = "Le champ est requis.";
-      formIsValid = false;
-    } else if (!input3.match(/^\d{10}$/)) {
-      errorsCopy.tel = "Le numéro de téléphone doit contenir 10 chiffres";
       formIsValid = false;
     } else {
       errorsCopy.tel = "";
@@ -104,33 +98,28 @@ export default function Login() {
 
   const handleSign = () => {
     if (handleVerif()) {
-      const valeurSansPremierCaractere = "+33" + input3.substring(1);
-      console.log(valeurSansPremierCaractere);
-      const phoneProvider = new firebase.auth.PhoneAuthProvider();
-      recaptchaVerifier.current.verify().then(() => {
-        phoneProvider.verifyPhoneNumber(valeurSansPremierCaractere, recaptchaVerifier.current)
-          .then(verificationId => {
-            navigation.navigate("Confirmation-numero", {
-              numero: input3,
-              password: input4,
-              id: verificationId,
-            });
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      });
+        
+        firebase.auth().createUserWithEmailAndPassword(input3, input4)
+        .then(() => {
+          const user = firebase.auth().currentUser;
+          user.sendEmailVerification()
+            .then(() => {
+              console.log('Verification email sent');
+              navigation.navigate('Confirmation-email',  {
+                email: input3,
+                password: input4,
+              });
+            })
+            .catch(error => console.log('Error sending verification email:', error));
+        })
+        .catch(error => console.log('Error signing up:', error));
+    };
+     
     }
-  };
 
   
 
-  const handlePhoneNumberChange = (value) => {
-    if (/^[0-9]*$/.test(value)) {
-      setInput1(value);
-      setInput3(value);
-    }
-  };
+ 
 
   const [transition, setTransition] = useState(true);
 
@@ -142,11 +131,6 @@ export default function Login() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         
         <View style={styles.appContainer}>
-        <FirebaseRecaptchaVerifierModal
-          ref={recaptchaVerifier}
-          firebaseConfig={firebaseConfig}
-          attemptInvisibleVerification={false}
-        />
           <View style={styles.divLogo}>
             <Image source={Logo} resizeMode="contain" style={styles.logo} />
           </View>
@@ -188,7 +172,6 @@ export default function Login() {
                 <TextInput
                   style={styles.input}
                   value={input1}
-                  onChangeText={handlePhoneNumberChange}
                   placeholder="Numero de téléphone"
                   keyboardType="numeric"
                   placeholderTextColor="gray"
@@ -248,9 +231,8 @@ export default function Login() {
                 <TextInput
                   style={styles.input2}
                   value={input3}
-                  onChangeText={handlePhoneNumberChange}
-                  placeholder="Numero de téléphone"
-                  keyboardType="numeric"
+                  onChangeText={setInput3}
+                  placeholder="Email"
                   placeholderTextColor="gray"
                 />
                 {errors.tel ? (

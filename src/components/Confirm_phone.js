@@ -37,8 +37,20 @@ const handleContinue = () => {
   
 }
 
-
-
+const handleTest = () => {
+  const userRef = firebase.firestore().collection("users").doc(id);
+  userRef.set({
+    firstName: "John",
+    age: 25,
+    city: "New York"
+  })
+  .then(() => {
+    Alert.alert("Data added successfully");
+  })
+  .catch((error) => {
+    Alert.alert(error.message);
+  });
+}
 
 
 
@@ -66,6 +78,7 @@ const handleContinue = () => {
             <TouchableOpacity style={styles.btnContinuer} title="Continuer" onPress={handleContinue}>
               <Text style={{color:'white', fontSize:15,}}>Continuer</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.btnContinuer} title="Continuer" onPress={handleTest}><Text>TEST</Text></TouchableOpacity>
           </View>
         </View>
       </TouchableWithoutFeedback>
