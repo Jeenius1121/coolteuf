@@ -19,10 +19,11 @@ import { useRef, useState } from "react";
 import moment from "moment";
 
 import { useNavigation } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
 
 export default function Signup1({ route }) {
+  const user = firebase.auth().currentUser;
   const navigation = useNavigation();
-  const { numero , password } = route.params;
   const [prenom, setPrenom] = useState("");
   const [ville, setVille] = useState("");
   const [day, setDay] = useState("");
@@ -213,17 +214,23 @@ export default function Signup1({ route }) {
     
   }
 
-  const handleContinu = () => {
+  const handleContinu = async () => {
     if (handleVerif()) {
-      navigation.navigate("Signup2", {
-        numero: numero,
-        password: password,
-        prenom: prenom,
-        age: year +"-"+ month +"-"+ day,
-        ville: ville,
-        fumeur: value1,
-        alcool: value2,
-      } );
+      
+        try {
+          await firebase.firestore().collection('users').doc(user.uid).update({
+            prenom: prenom,
+            age: year +" "+ month +" "+ day,
+            ville: ville,
+            fumeur: value1,
+            alcool: value2,
+          });
+          navigation.navigate("Signup2");
+        } catch (error) {
+          console.log('Error adding user info:', error);
+        }
+      
+      
     } else {
       
     }

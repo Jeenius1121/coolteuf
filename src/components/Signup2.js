@@ -17,7 +17,7 @@ import {
   import * as ImagePicker from 'expo-image-picker';
   import { launchCameraAsync } from 'expo-image-picker';
   
-
+  import firebase from "firebase/compat/app";
   
   
   import Logo from "../assets/images/Icons/Logo2.png";
@@ -27,7 +27,7 @@ import { auth } from "../../firebase";
 
 export default function Signup2({ route }) {
  
-  
+  const user = firebase.auth().currentUser;
     const [image, setImage] = useState("");
     const navigation = useNavigation();
     // const { numero , password , prenom , age , ville , fumeur , alcool } = route.params;
@@ -69,40 +69,26 @@ export default function Signup2({ route }) {
         console.log(result);
       
         if (!result.canceled) {
-          setImage(result.uri);
+          setImage(result.assets[0].uri);
         }
       };
 
-      const numero = "0000000000"
-      const password = "test"
-      const prenom = "lol"
-      const age = "2001-12-23"
-      const ville = "Lievin"
-      const fumeur = "non"
-      const alcool = "oui"
-
       
-      const handleSubmit = () => {
-        auth
-          .createUserWithEmailAndPassword(email, password)
-          .then(userCredentials => {
-            const user = userCredentials.user;
-            console.log('Registered with:', user.email);
-          })
-          .catch(error => alert(error.message))
+      const handleSubmit = async () => {
+        const updateData = {};
+if (image) {
+  const response = await fetch(image);
+  const blob = await response.blob();
+  const ref = firebase.storage().ref().child(`images/${user.uid}`);
+  await ref.put(blob);
+
+  const imageUrl = await ref.getDownloadURL();
+  updateData.imageUrl = imageUrl;
+}
+
+await firebase.firestore().collection('users').doc(user.uid).update(updateData);
+
       }
-      
-        
-          
-          
-     
-        
-          
-        
-          
-           
-        
-
   return (
     <>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>

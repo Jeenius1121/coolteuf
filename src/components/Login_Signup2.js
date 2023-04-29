@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import Phone from "../assets/images/Icons/telephone.png";
 import { useNavigation } from "@react-navigation/native";
-import { FirebaseRecaptchaVerifierModal } from "expo-firebase-recaptcha";
-import { firebaseConfig } from "../../firebase";
 import firebase from "firebase/compat/app";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import {
   View,
@@ -19,8 +19,6 @@ import {
 
 import GoogleIcon from "../assets/images/Icons/google.png";
 import Logo from "../assets/images/Icons/Logo2.png";
-import { StatusBar } from "expo-status-bar";
-import { RecaptchaVerifier } from "firebase/auth";
 import { auth } from "../../firebase";
 
 export default function Login2() {
@@ -49,6 +47,9 @@ export default function Login2() {
         console.log("Erreur de connexion:", errorMessage);
       });
   };
+
+  
+
 
   const handleVerif = () => {
     let formIsValid = true;
@@ -96,26 +97,28 @@ export default function Login2() {
 
 
 
-  const handleSign = () => {
+  const handleSign = async () => {
     if (handleVerif()) {
-        
-        firebase.auth().createUserWithEmailAndPassword(input3, input4)
-        .then(() => {
-          const user = firebase.auth().currentUser;
-          user.sendEmailVerification()
-            .then(() => {
-              console.log('Verification email sent');
-              navigation.navigate('Confirmation-email',  {
-                email: input3,
-                password: input4,
-              });
-            })
-            .catch(error => console.log('Error sending verification email:', error));
-        })
-        .catch(error => console.log('Error signing up:', error));
-    };
-     
+      try {
+        const result = await firebase.auth().createUserWithEmailAndPassword(input3, input4);
+        const user = result.user;
+        await user.sendEmailVerification();
+        await AsyncStorage.setItem('email', input3);
+        await AsyncStorage.setItem('password', input4);
+        await firebase.firestore().collection('users').doc(user.uid).set({
+          email: input3,
+          password: result.user.uid, // le mot de passe est stocké dans user.uid
+        });
+        console.log('Verification email sent');
+        navigation.navigate('Confirmation-email', {
+          email: input3,
+          password: input4,
+        });
+      } catch (error) {
+        console.log('Error signing up:', error);
+      }
     }
+  };
 
   
 

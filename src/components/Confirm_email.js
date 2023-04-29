@@ -17,25 +17,50 @@ import {
   import { useNavigation } from "@react-navigation/native";
   import firebase from "firebase/compat/app";
   import { Alert } from "react-native";
+  import AsyncStorage from '@react-native-async-storage/async-storage';
+
+  
   
   export default function ConfirmEmail({ route }) {
-    const navigation = useNavigation();
-    const { email , password, id } = route.params;
-    const [input1, setInput1] = useState("");
-    const [verificationCode, setVerificationCode] = useState('');
-    
-  const handleContinue = () => {
-    
+    const [user, setUser] = useState(null);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const navigation = useNavigation();
+  const [verificationCode, setVerificationCode] = useState('');
 
-    
-      const user = firebase.auth().currentUser;
-      const credential = firebase.auth.EmailAuthProvider.credential(user.email, verificationCode);
-      user.linkWithCredential(credential)
-        .then(() => console.log('Account activated'))
-        .catch(error => console.log('Error activating account:', error));
-    
-  }
  
+    useEffect(() => {
+      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          setUser(user);
+          setIsEmailVerified(user.emailVerified);
+        }
+      });
+    
+      return unsubscribe;
+    }, []);
+
+  const handleContinue = async () => {
+    try {
+      // Vérifie l'e-mail de l'utilisateur à nouveau
+      const user = firebase.auth().currentUser;
+      await user.reload();
+      setIsEmailVerified(user.emailVerified);
+  
+      // Mettre à jour l'état de l'utilisateur dans Firestore
+      await firebase.firestore().collection('users').doc(user.uid).update({
+        emailVerified: user.emailVerified,
+      });
+  
+      // Naviguer vers la page suivante en fonction de l'état de vérification de l'e-mail
+      if (user.emailVerified) {
+        navigation.navigate('Signup1');
+      } else {
+        alert('Cliquez sur le lien dans votre boîte mail pour vérifier votre adresse e-mail');
+      }
+    } catch (error) {
+      console.log('Erreur lors de la vérification de l\'email:', error);
+    }
+  };
   
   
   
@@ -48,18 +73,11 @@ import {
             </View>
             <View style={styles.divTitre}>
               <Text style={styles.titre}>
-                Un code vous a été envoyé au numero: 
+                Un email t'a été envoyé. Cliques sur le lien pour valider ton compte
               </Text>
               
             </View>
             <View style={styles.divCode}>
-              <TextInput
-                style={styles.input}
-                onChangeText={setInput1}
-                placeholder="Votre code reçu"
-                placeholderTextColor="gray"
-              />
-              <Text style={{color:'white' , fontSize:15, }}>Renvoyer le code</Text>
               <TouchableOpacity style={styles.btnContinuer} title="Continuer" onPress={handleContinue}>
                 <Text style={{color:'white', fontSize:15,}}>Continuer</Text>
               </TouchableOpacity>
