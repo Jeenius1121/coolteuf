@@ -179,6 +179,22 @@ export default function Signup1({ route }) {
     }
   };
 
+  const handleCity = async (ville) => {
+    setVille(ville);
+    const apiUrl = "https://geo.api.gouv.fr/communes?nom=" + ville + "&fields=departement&boost=population&limit=5";
+  
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      // Utilisez les données récupérées comme vous le souhaitez
+      console.log(data); // Affiche les données dans la console
+      // Mettez à jour votre état ou effectuez d'autres traitements ici
+    } catch (error) {
+      console.log(error);
+      // Gérez les erreurs ici
+    }
+  }
+
   const errorsCopy = { ...errors };
   const handleVerif = () => {
    let formValid = true
@@ -221,7 +237,6 @@ export default function Signup1({ route }) {
           await firebase.firestore().collection('users').doc(user.uid).update({
             prenom: prenom,
             age: year +" "+ month +" "+ day,
-            ville: ville,
             fumeur: value1,
             alcool: value2,
           });
@@ -307,13 +322,7 @@ export default function Signup1({ route }) {
             />
           </View>
 
-          <TextInput
-            placeholder="Ville"
-            placeholderTextColor="gray"
-            style={styles.input}
-            value={ville}
-            onChangeText={setVille}
-          />
+         
         </View>
 
         <View style={styles.RadioGroup}>
